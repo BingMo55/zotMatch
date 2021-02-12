@@ -1,7 +1,7 @@
 "use strict";
 
 const connectToDatabase = require("./db");
-const Note = require("./notes.model.js");
+const User = require("./user.model.js");
 require("dotenv").config({ path: "./variables.env" });
 
 module.exports.hello = (event, context, callback) => {
@@ -13,11 +13,11 @@ module.exports.create = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   connectToDatabase().then(() => {
-    Note.create(JSON.parse(event.body))
-      .then((note) =>
+    User.create(JSON.parse(event.body))
+      .then((user) =>
         callback(null, {
           statusCode: 200,
-          body: JSON.stringify(note),
+          body: JSON.stringify(user),
         })
       )
       .catch((err) =>
@@ -31,90 +31,66 @@ module.exports.create = (event, context, callback) => {
 };
 
 module.exports.getOne = (event, context, callback) => {
-	context.callbackWaitsForEmptyEventLoop = false;
+  context.callbackWaitsForEmptyEventLoop = false;
 
-	connectToDatabase().then(() => {
-		Note.findById(event.pathParameters.id)
-			.then(note =>
-				callback(null, {
-					statusCode: 200,
-					body: JSON.stringify(note)
-				})
-			)
-			.catch(err =>
-				callback(null, {
-					statusCode: err.statusCode || 500,
-					headers: { 'Content-Type': 'text/plain' },
-					body: 'Could not fetch the note.'
-				})
-			);
-	});
+  connectToDatabase().then(() => {
+    User.findById(event.pathParameters.id)
+      .then((user) =>
+        callback(null, {
+          statusCode: 200,
+          body: JSON.stringify(user),
+        })
+      )
+      .catch((err) =>
+        callback(null, {
+          statusCode: err.statusCode || 500,
+          headers: { "Content-Type": "text/plain" },
+          body: "Could not fetch the note.",
+        })
+      );
+  });
 };
 
 module.exports.getAll = (event, context, callback) => {
-	context.callbackWaitsForEmptyEventLoop = false;
+  context.callbackWaitsForEmptyEventLoop = false;
 
-	connectToDatabase().then(() => {
-		Note.find()
-			.then(notes =>
-				callback(null, {
-					statusCode: 200,
-					body: JSON.stringify(notes)
-				})
-			)
-			.catch(err =>
-				callback(null, {
-					statusCode: err.statusCode || 500,
-					headers: { 'Content-Type': 'text/plain' },
-					body: 'Could not fetch the notes.'
-				})
-			);
-	});
+  connectToDatabase().then(() => {
+    User.find()
+      .then((user) =>
+        callback(null, {
+          statusCode: 200,
+          body: JSON.stringify(user),
+        })
+      )
+      .catch((err) =>
+        callback(null, {
+          statusCode: err.statusCode || 500,
+          headers: { "Content-Type": "text/plain" },
+          body: "Could not fetch the notes.",
+        })
+      );
+  });
 };
 
 module.exports.update = (event, context, callback) => {
-	context.callbackWaitsForEmptyEventLoop = false;
+  context.callbackWaitsForEmptyEventLoop = false;
 
-	connectToDatabase().then(() => {
-		Note.findByIdAndUpdate(event.pathParameters.id, JSON.parse(event.body), {
-			new: true
-		})
-			.then(note =>
-				callback(null, {
-					statusCode: 200,
-					body: JSON.stringify(note)
-				})
-			)
-			.catch(err =>
-				callback(null, {
-					statusCode: err.statusCode || 500,
-					headers: { 'Content-Type': 'text/plain' },
-					body: 'Could not fetch the notes.'
-				})
-			);
-	});
-};
-
-module.exports.delete = (event, context, callback) => {
-	context.callbackWaitsForEmptyEventLoop = false;
-
-	connectToDatabase().then(() => {
-		Note.findByIdAndRemove(event.pathParameters.id)
-			.then(note =>
-				callback(null, {
-					statusCode: 200,
-					body: JSON.stringify({
-						message: 'Removed note with id: ' + note._id,
-						note: note
-					})
-				})
-			)
-			.catch(err =>
-				callback(null, {
-					statusCode: err.statusCode || 500,
-					headers: { 'Content-Type': 'text/plain' },
-					body: 'Could not fetch the notes.'
-				})
-			);
-	});
+  connectToDatabase().then(() => {
+    User.findByIdAndUpdate(event.pathParameters.id, JSON.parse(event.body), {
+      new: true,
+    })
+      .then((user) =>
+        callback(null, {
+          statusCode: 200,
+          body: JSON.stringify(user),
+        })
+      )
+      .catch((err) =>
+        callback(null, {
+          statusCode: err.statusCode || 500,
+          headers: { "Content-Type": "text/plain" },
+          body: "Could not fetch the notes.",
+        })
+      );
+  });
 };
