@@ -1,5 +1,5 @@
 "use strict";
-
+const mongoose = require("mongoose");
 const connectToDatabase = require("./db");
 const User = require("./user.model.js");
 require("dotenv").config({ path: "./variables.env" });
@@ -13,7 +13,7 @@ module.exports.create = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   connectToDatabase().then(() => {
-    User.create(JSON.parse(event.body))
+    User.create(event)
       .then((user) =>
         callback(null, {
           statusCode: 200,
@@ -48,6 +48,30 @@ module.exports.getOne = (event, context, callback) => {
           body: "Could not fetch the note.",
         })
       );
+  });
+};
+
+module.exports.match = (event, context, callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+  connectToDatabase().then(async () => {
+    const user = event;
+    const potentialMatches = user.likes;
+    const matches = [];
+    await Promise.all(
+      potentialMatches.map(async (match) => {
+        const found = await User.find({ name: `${match}` });
+        if (found.length == 0) {
+          return;
+        }
+        //console.log("Successfully found", match, found[0]);
+        matches.push(found[0]);
+      })
+    );
+    callback(null, {
+      statusCode: 200,
+      body: matches,
+    });
+    mongoose.disconnect();
   });
 };
 
