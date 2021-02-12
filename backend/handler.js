@@ -2,31 +2,39 @@
 const mongoose = require("mongoose");
 const connectToDatabase = require("./db");
 const User = require("./user.model.js");
-require("dotenv").config({ path: "./variables.env" });
+const Match = require("./matches.model.js");
 
-module.exports.hello = (event, context, callback) => {
-  console.log("Hello World");
-  callback(null, "Hello World");
-};
+require("dotenv").config({ path: "./variables.env" });
 
 module.exports.create = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   connectToDatabase().then(() => {
-    User.create(event)
-      .then((user) =>
+    const addUser = JSON.parse(event.body);
+    console.log("Adding", addUser);
+    User.create(addUser)
+      .then((user) => {
+        console.log("Successfully created");
         callback(null, {
           statusCode: 200,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": true,
+          },
           body: JSON.stringify(user),
-        })
-      )
-      .catch((err) =>
+        });
+      })
+      .catch((err) => {
+        console.log("Error", err);
         callback(null, {
           statusCode: err.statusCode || 500,
-          headers: { "Content-Type": "text/plain" },
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": true,
+          },
           body: "Could not create the note.",
-        })
-      );
+        });
+      });
   });
 };
 
@@ -38,13 +46,20 @@ module.exports.getOne = (event, context, callback) => {
       .then((user) =>
         callback(null, {
           statusCode: 200,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": true,
+          },
           body: JSON.stringify(user),
         })
       )
       .catch((err) =>
         callback(null, {
           statusCode: err.statusCode || 500,
-          headers: { "Content-Type": "text/plain" },
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": true,
+          },
           body: "Could not fetch the note.",
         })
       );
@@ -54,24 +69,56 @@ module.exports.getOne = (event, context, callback) => {
 module.exports.match = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
   connectToDatabase().then(async () => {
-    const user = event;
+    console.log("Event body", event.body);
+    const user = JSON.parse(event.body);
+    const userObj = await User.find(
+      {
+        name: `${user.name}`,
+        email: `${user.email}`,
+      },
+      "-_id -__v"
+    );
     const potentialMatches = user.likes;
     const matches = [];
-    await Promise.all(
-      potentialMatches.map(async (match) => {
-        const found = await User.find({ name: `${match}` });
-        if (found.length == 0) {
-          return;
-        }
-        //console.log("Successfully found", match, found[0]);
-        matches.push(found[0]);
-      })
-    );
-    callback(null, {
-      statusCode: 200,
-      body: matches,
-    });
-    mongoose.disconnect();
+    try {
+      await Promise.all(
+        potentialMatches.map(async (match) => {
+          const found = await User.find({ name: `${match}` }, "-_id -__v");
+          if (found.length == 0) {
+            return;
+          }
+          console.log(`Found ${found[0]} for`, userObj[0]);
+          await Match.create([userObj[0], found[0]])
+            .then((match) => {
+              console.log("Successfully created match", [userObj[0], found[0]]);
+            })
+            .catch((err) => {
+              console.log("Error creating Match", err);
+            });
+          matches.push(found[0]);
+        })
+      );
+      const resp = {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": true,
+        },
+        body: matches,
+      };
+      console.log("Response", resp);
+      callback(null, resp);
+    } catch (err) {
+      console.log("Error", err);
+      callback(null, {
+        statusCode: err.statusCode || 500,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": true,
+        },
+        body: "Could not create the note.",
+      });
+    }
   });
 };
 
@@ -83,13 +130,20 @@ module.exports.getAll = (event, context, callback) => {
       .then((user) =>
         callback(null, {
           statusCode: 200,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": true,
+          },
           body: JSON.stringify(user),
         })
       )
       .catch((err) =>
         callback(null, {
           statusCode: err.statusCode || 500,
-          headers: { "Content-Type": "text/plain" },
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": true,
+          },
           body: "Could not fetch the notes.",
         })
       );
@@ -106,13 +160,20 @@ module.exports.update = (event, context, callback) => {
       .then((user) =>
         callback(null, {
           statusCode: 200,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": true,
+          },
           body: JSON.stringify(user),
         })
       )
       .catch((err) =>
         callback(null, {
           statusCode: err.statusCode || 500,
-          headers: { "Content-Type": "text/plain" },
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": true,
+          },
           body: "Could not fetch the notes.",
         })
       );
