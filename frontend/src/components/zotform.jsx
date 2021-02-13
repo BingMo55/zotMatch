@@ -33,16 +33,18 @@ export default function ZotForm() {
   return (
     <Formik
       initialValues={{
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         major: "",
+        studentOne: "",
       }}
       validationSchema={Yup.object({
-        firstName: Yup.string().required("Required"),
-        lastName: Yup.string().required("Required"),
-        email: Yup.string().email("Invalid Email").required("Required"),
-        major: Yup.string().required("Required"),
-        studentOne: Yup.string().required("Required"),
+        firstName: Yup.string().required("required"),
+        lastName: Yup.string().required("required"),
+        email: Yup.string().email("Invalid Email").required("required"),
+        major: Yup.string().required("required"),
+        studentOne: Yup.string().required("required"),
         studentTwo: Yup.string(),
         studentThree: Yup.string(),
       })}
@@ -88,7 +90,7 @@ export default function ZotForm() {
                   name="email"
                   type="email"
                   placeholder="anteater@uci.edu"
-                  size="48"
+                  size="50"
                   />
             </div>
           </div>
