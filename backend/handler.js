@@ -69,7 +69,6 @@ module.exports.getOne = (event, context, callback) => {
 module.exports.match = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
   connectToDatabase().then(async () => {
-    console.log("Event body", event.body);
     const user = JSON.parse(event.body);
     const userObj = await User.find(
       {
@@ -79,7 +78,6 @@ module.exports.match = (event, context, callback) => {
       "-_id -__v"
     );
     const potentialMatches = user.likes;
-    const matches = [];
     try {
       await Promise.all(
         potentialMatches.map(async (match) => {
@@ -88,26 +86,34 @@ module.exports.match = (event, context, callback) => {
             return;
           }
           console.log(`Found ${found[0]} for`, userObj[0]);
-          await Match.create([userObj[0], found[0]])
+          const matchedUsers = { users: [userObj[0], found[0]] };
+          await Match.create(matchedUsers)
             .then((match) => {
-              console.log("Successfully created match", [userObj[0], found[0]]);
+              console.log("Successfully created match", matchedUsers);
+              const resp = {
+                statusCode: 200,
+                headers: {
+                  "Access-Control-Allow-Origin": "*",
+                  "Access-Control-Allow-Credentials": true,
+                },
+                body: "Successfully created match",
+              };
+              callback(null, resp);
             })
             .catch((err) => {
               console.log("Error creating Match", err);
+              const resp = {
+                statusCode: 200,
+                headers: {
+                  "Access-Control-Allow-Origin": "*",
+                  "Access-Control-Allow-Credentials": true,
+                },
+                body: "Error creating Match",
+              };
+              callback(null, resp);
             });
-          matches.push(found[0]);
         })
       );
-      const resp = {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": true,
-        },
-        body: matches,
-      };
-      console.log("Response", resp);
-      callback(null, resp);
     } catch (err) {
       console.log("Error", err);
       callback(null, {
