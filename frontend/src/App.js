@@ -37,12 +37,12 @@ const App = () => {
         <div class="column middle">
           <div class="box">
             {image}
-            <h1>ZotMatch</h1>
+            <h1>ZotMatch 💙 💛</h1>
             <p class="desc">
-              hi there! we're trying to help anteaters find love or friendship
-              during quarantine. enter the full names of 3 uci students you'd
-              like to get to know better, and if they like you back you'll be
-              matched! 🥺
+              hi there! we built this app to help anteaters find love or
+              friendship during quarantine. enter the full names of 3 uci
+              students you'd like to get to know better, and if they like you
+              back you'll be matched via email! good luck and shoot your zot! 🥺
             </p>
             <ZotForm />
           </div>

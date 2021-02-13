@@ -39,11 +39,17 @@
 
 .desc {
   font-size: small;
+  font-weight: bold;
   font-family: Arial, Helvetica, sans-serif;
   line-height: 20px;
 }
 
+.light {
+  font-weight: lighter;
+}
+
 .label {
+  font-weight: bolder;
   padding: 5px;
 }
 /* Create three unequal columns that floats next to each other */
@@ -89,6 +95,14 @@
 
 .text-input:focus {
   outline: none;
+}
+
+.submitSuccess {
+  color: royalblue;
+  font-size: large;
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 20px;
 }
 
 .error {
