@@ -54,6 +54,15 @@ functions:
           path: users
           method: get
           cors: true
+  sendMatches:
+    handler: handler.sendMatches # path will be domain.name.com/dev/users
+    events:
+      - http:
+          path: match/send
+          method: get
+          cors: true
+      - http: ANY /
+
   update:
     handler: handler.update # path will be domain.name.com/dev/users/1
     events:
