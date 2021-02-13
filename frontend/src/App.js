@@ -6,8 +6,8 @@ import { render } from "@testing-library/react";
 const App = () => {
   const image = (
     <img
-      src="https://i.redd.it/te843tecdv031.jpg"
-      style={{ width: "300px", height: "200px" }}
+      src="https://zotmatch-assets.s3.amazonaws.com/logo.png"
+      style={{ width: "50%", height: "50%" }}
     />
   );
   return (
@@ -48,7 +48,13 @@ const App = () => {
           </div>
         </div>
       </div>
-      <div class="footer">Made with ❤️ in Irvine, CA</div>
+      <div class="footer">
+        Made with ❤️ in Irvine, CA | <a href="url">About</a>
+        {" | "}
+        <a href="https://zotmatch-assets.s3.amazonaws.com/a17adba6-5cb1-4e56-9e94-d0c026b4ad6c_en.html">
+          Privacy Policy
+        </a>
+      </div>
     </div>
   );
 };
