@@ -49,9 +49,10 @@ const App = () => {
         </div>
       </div>
       <div class="footer">
-        Made with ❤️ in Irvine, CA | <a href="url">About</a>
+        Made with ❤️ in Irvine, CA |{" "}
+        <a href="https://zotmatch-assets.s3.amazonaws.com/about.html">About</a>
         {" | "}
-        <a href="https://zotmatch-assets.s3.amazonaws.com/a17adba6-5cb1-4e56-9e94-d0c026b4ad6c_en.html">
+        <a href="https://zotmatch-assets.s3.amazonaws.com/privacy.html">
           Privacy Policy
         </a>
       </div>
