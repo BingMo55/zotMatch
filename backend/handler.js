@@ -156,6 +156,72 @@ module.exports.getAll = (event, context, callback) => {
   });
 };
 
+module.exports.sendMatches = (event, context, callback) => {
+  const aws = require('aws-sdk');
+  const ses = new aws.SES({ region: "us-east-1" });
+  
+  connectToDatabase().then(() => {
+    const matches = await Match.find()
+    
+    matches.forEach(match=>
+      {
+        
+        if(match.length != 2)
+        {
+          return;
+        }
+        const userA = match[0];
+        const userB = match[1];
+
+        if(!userA || !userB)
+        {
+          return;
+        }
+
+        var params = {
+          Destination: {
+            ToAddresses: [userA.email,userB.email],
+          },
+          Message: {
+            Body: {
+              Text: { Data: "You've been matched!" },
+            },
+    
+            Subject: { Data: "Test Email" },      
+          },
+          Source: "zotMatches@gmail.com",
+        };
+  
+        try {
+          ses.sendEmail(params).promise();
+          console.log("success");
+          callback(null, {
+            statusCode: 200,
+            headers: {
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Credentials": true,
+            },
+            body: 'Email sent!'
+            
+          });
+
+      } catch (e) {
+          console.log("failed");
+          console.error(e);
+          callback(null, {
+              statusCode: 400,
+              headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": true,
+              },
+              body: 'Sending failed'
+          });
+      }
+
+      })
+    
+  });
+};
 module.exports.update = (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
