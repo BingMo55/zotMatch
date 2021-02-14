@@ -32,6 +32,7 @@ const CustomDropDown = ({ label, ...props }) => {
 
 export default function ZotForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [duplicate, setDuplicate] = useState(false);
 
   const normalizeName = (first,last) => {
     return first.toLowerCase() + last.toLowerCase()
@@ -65,7 +66,6 @@ export default function ZotForm() {
             const n = name.split(" ")
             const first = n[0]
             const last = n.length > 1 ? n[1] : ""
-
             const name_id = normalizeName(first,last)
             return name_id
           })
@@ -78,17 +78,21 @@ export default function ZotForm() {
             name: values.firstName + " " + values.lastName,
             major: values.major
           }
-          try{
-            await axios.post('https://ov7mtcvxm5.execute-api.us-east-1.amazonaws.com/dev/users',payload)
-            resetForm();
-            setSubmitting(false);
-            setSubmitted(true);
-            await axios.post('https://ov7mtcvxm5.execute-api.us-east-1.amazonaws.com/dev/match', payload)
+          // verify existing
+          /*
+          const foundUser = await axios.get(`https://ov7mtcvxm5.execute-api.us-east-1.amazonaws.com/dev/users/${payload.email}`)
+          console.log('Found',foundUser)
+          if (foundUser.data){
+            await axios.put(`https://ov7mtcvxm5.execute-api.us-east-1.amazonaws.com/dev/users/${payload.id}`, payload)
+            setDuplicate(true)
+            return
           }
-          catch(err){
-            console.log('Error', err)
-            alert(err);
-          }
+          */
+          await axios.post('https://ov7mtcvxm5.execute-api.us-east-1.amazonaws.com/dev/users',payload)
+          resetForm();
+          setSubmitting(false);
+          setSubmitted(true);
+          await axios.post('https://ov7mtcvxm5.execute-api.us-east-1.amazonaws.com/dev/match', payload)
         }, 500);
       }}
     >
@@ -181,7 +185,15 @@ export default function ZotForm() {
           
           </div>
           {
-              submitted ?
+            duplicate ?
+            <div>
+              <p class="submitSuccess">Your submission has been updated.</p>
+            </div>
+            :
+            ""
+          }
+          {
+            submitted ?
               <div>
                 <p class="submitSuccess">Thanks for your submission! 🎉
                 </p>
@@ -189,7 +201,7 @@ export default function ZotForm() {
               </div>
               :
               ""
-            }
+          }
         </Form>
         
       )}
