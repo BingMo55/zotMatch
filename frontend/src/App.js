@@ -6,8 +6,8 @@ import { render } from "@testing-library/react";
 const App = () => {
   const image = (
     <img
-      src="https://i.redd.it/te843tecdv031.jpg"
-      style={{ width: "300px", height: "200px" }}
+      src="https://zotmatch-assets.s3.amazonaws.com/logo.png"
+      style={{ width: "50%", height: "50%" }}
     />
   );
   return (
@@ -37,18 +37,25 @@ const App = () => {
         <div class="column middle">
           <div class="box">
             {image}
-            <h1>ZotMatch</h1>
+            <h1>ZotMatch 💙 💛</h1>
             <p class="desc">
-              hi there! we're trying to help anteaters find love or friendship
-              during quarantine. enter the full names of 3 uci students you'd
-              like to get to know better, and if they like you back you'll be
-              matched! 🥺
+              hi there! we built this app to help anteaters find love or
+              friendship during quarantine. enter the full names of 3 uci
+              students you'd like to get to know better, and if they like you
+              back you'll be matched via email! good luck and shoot your zot! 🥺
             </p>
             <ZotForm />
           </div>
         </div>
       </div>
-      <div class="footer">Made with ❤️ in Irvine, CA</div>
+      <div class="footer">
+        Made with ❤️ in Irvine, CA |{" "}
+        <a href="https://zotmatch-assets.s3.amazonaws.com/about.html">About</a>
+        {" | "}
+        <a href="https://zotmatch-assets.s3.amazonaws.com/privacy.html">
+          Privacy Policy
+        </a>
+      </div>
     </div>
   );
 };
